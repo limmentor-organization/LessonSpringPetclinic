@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body}, 'error')}">
+
+	<body>
+		<!-- 画像表示 -->
+		<img src="../static/resources/images/pets.png" th:src="@{/resources/images/pets.png}"/>
+		<!-- 見出し文 -->
+		<h2>Something happened...</h2>
+		<!-- エラーメッセージ表示 -->
+		<p th:text="${message}">Exception message</p>
+	</body>
+	
+</html>

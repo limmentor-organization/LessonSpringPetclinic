@@ -18,6 +18,8 @@ package org.springframework.samples.petclinic;
 
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.samples.petclinic.model.BaseEntity;
+import org.springframework.samples.petclinic.model.Person;
 
 public class PetClinicRuntimeHints implements RuntimeHintsRegistrar {
 
@@ -26,6 +28,9 @@ public class PetClinicRuntimeHints implements RuntimeHintsRegistrar {
 		hints.resources().registerPattern("db/*"); // https://github.com/spring-projects/spring-boot/issues/32654
 		hints.resources().registerPattern("messages/*");
 		hints.resources().registerPattern("META-INF/resources/webjars/*");
+		hints.resources().registerPattern("mysql-default-conf");
+		hints.serialization().registerType(BaseEntity.class);
+		hints.serialization().registerType(Person.class);
 	}
 
 }

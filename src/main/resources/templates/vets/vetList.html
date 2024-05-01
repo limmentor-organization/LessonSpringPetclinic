@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html xmlns:th="https://www.thymeleaf.org"
+	th:replace="~{fragments/layout :: layout (~{::body}, 'vets')}">
+	
+<body>
+	<!-- 獣医師テーブル名 -->
+	<h2>Veterinarians</h2>
+	<!-- テーブル全体定義 -->
+	<table id="vets" class="table table-striped">
+		<!-- テーブルカラム名定義 -->
+		<thead>
+			<!-- テーブル内の行定義 -->
+			<tr>
+				<!-- 獣医師名カラム -->
+				<th>Name</th>
+				<!-- 専門分野名カラム -->
+				<th>Specialties</th>
+			</tr>
+		</thead>
+		<!-- テーブルカラム値定義 -->
+		<tbody>
+			<!-- テーブル内の行定義 -->
+			<tr th:each="vet : ${listVets}">
+				<!-- 獣医師名のデータセル定義 -->
+				<td th:text="${vet.firstName + ' ' + vet.lastName}"></td>
+				<!-- 専門分野名のデータセル定義 -->
+				<td>
+					<!-- 専門分野名が存在する場合、そのまま出力 -->
+					<span th:each="specialty : ${vet.specialties}"
+						th:text="${specialty.name + ' '}"/>
+					<!-- 専門分野名が存在しない場合、noneを出力 -->
+					<span th:if="${vet.nrOfSpecialties == 0}">none</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<!-- ページタグ定義 -->
+	<div th:if="${totalPages > 1}">
+		<span>Pages:</span>
+		<span>[</span>
+		<!-- ページ番号定義 -->
+		<span th:each="i: ${#numbers.sequence(1, totalPages)}">
+			<!-- 開いているページがページ番号と一致しない場合、ページ番号をリンクに -->
+			<a th:if="${currentPage != i}" th:href="@{'/vets.html?page=__${i}__'}">[[${i}]]</a>
+			<!-- 開いているページがページ番号と一致してる場合、ページ番号を非リンクに -->
+			<span th:unless="${currentPage != i}">[[${i}]]</span>
+		</span>
+		<span>]&nbsp;</span>
+		<!-- 左向きダブル矢印定義 -->
+		<span>
+			<!-- 開いているページが1より大きいとき、矢印をリンクに -->
+			<a th:if="${currentPage > 1}" th:href="@{'/vets.html?page=1'}" title="First"
+				class="fa fa-fast-backward"></a>
+			<!-- 開いているページが1より大きくないとき、矢印を非リンクに -->
+			<span th:unless="${currentPage > 1}" title="First" class="fa fa-fast-backward"></span>
+		</span>
+		<!-- 左向きシングル矢印定義 -->
+		<span>
+			<!-- 開いているページが1より大きいとき、矢印をリンクに -->
+			<a th:if="${currentPage > 1}" th:href="@{'/vets.html?page=__${currentPage - 1}__'}" title="Previous"
+				class="fa fa-step-backward"></a>
+			<!-- 開いているページが1より大きくないとき、矢印を非リンクに -->
+			<span th:unless="${currentPage > 1}" title="Previous" class="fa fa-step-backward"></span>
+		</span>
+		<!-- 右向きシングル矢印定義 -->
+		<span>
+			<!-- 開いているページが総ページ数より小さい場合、矢印をリンクに -->
+			<a th:if="${currentPage < totalPages}" th:href="@{'/vets.html?page=__${currentPage + 1}__'}" title="Next"
+				class="fa fa-step-forward"></a>
+			<!-- 開いているページが総ページ数より小さくない場合、矢印を非リンクに -->
+			<span th:unless="${currentPage < totalPages}" title="Next" class="fa fa-step-forward">
+		</span>
+		<!-- 右向きダブル矢印定義 -->
+		<span>
+			<!-- 開いているページが総ページ数より小さい場合、矢印をリンクに -->
+			<a th:if="${currentPage < totalPages}" th:href="@{'/vets.html?page=__${totalPages}__'}" title="Last"
+				class="fa fa-fast-forward"></a>
+			<!-- 開いているページが総ページ数より小さくない場合、矢印を非リンクに -->
+			<span th:unless="${currentPage < totalPages}" title="Last" class="fa fa-fast-forward"></span>
+		</span>
+	</div>
+</body>
+</html>

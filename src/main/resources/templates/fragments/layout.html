@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- 
+■各箇所bootstrapの解説：
+	1.navbar: ナビゲーションバーのコンテナを定義
+	2.navbar-expand-lg: large以上のデバイスでナブバーを拡張する
+	3.navbar-dark: ナブバーの色を暗色にする
+	4.container-fluid: 全てのブレークポイントで幅100％指定
+	5.navbar-brand: ロゴを含むリンクを指定
+	6.navbar-toggler: レスポンシブナブバーのトグルボタン定義
+	7.navbar-toggler-icon: ナブバーのトグルボタンに表示されるアイコン設定
+	8.collapse: コンテンツを隠す
+	9.navbar-collapse: ナブバー内の要素を折りたたむ
+	10.navbar-nav: ナブバーメニュー内のリストを指定し、リスト全体に対して適切なスタイルとレイアウトを提供
+	11.mb-:margin bottomの設定
+	12.mb-lg-0: largeサイズのデバイスのmarginを0
+	13.nav-link: ナブバーメニュー内のリンクを指定
+
+■各所タグ/属性の解説：
+	1.role="navigation": コンピュータにナブバーであることを認識させるために設定
+	2.data-bs-toggle="collapse": 要素がトグル機能を持つことを指定する。data-bs-targetとセットで用いる。
+	3.data-bs-target="#main-navbar": トグル機能時実装するタグのid属性値を指定
+	
+■各箇所thymeleafの解説：
+	1.th:remove: th:remove="all"でそのタグと子全て削除する。thymeleaf起動時に実行されるので、
+					th:replaceの方のタグのみ残り、th:fragmentの方のタグは削除される。
+	2.th:fragment: 他のテンプレート内で再利用される部分を定義するために利用される。
+					th:fragment付随のタグの子要素が、th:replaceに埋め込まれるイメージ。
+	3.th:class: 動的にclassを定義することができる。（条件分岐でclass定義を変化させることができる）
+	4.th:insert: 指定されたテンプレートフラグメントを挿入するために使用する。
+	5.th:block: thymeleafのブロック要素を示す。条件分岐や反復処理など複数の子要素が伴う時に利用する。
+-->
+<html th:fragment="layout (template, menu)">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<link rel="shortcut icon" type="image/x-icon" th:href="@{/resources/images/favicon.png}">
+	
+	<title>PetClinic :: a Spring Framework demonstration</title>
+	
+	<link th:href="@{/webjars/font-awesome/4.7.0/css/font-awesome.min.css}" rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/resources/css/petclinic.css}" />
+	
+</head>
+
+<body>
+	<!-- ヘッダーナビゲーションバー -->
+	<nav class="navbar navbar-expand-lg navbar-dark" role="navigation">
+		<!-- 全てのブレークポイントで幅100%指定 -->
+		<div class="container-fluid">
+			<!-- ロゴを含むリンクを指定 -->
+			<a class="navbar-brand" th:href="@{/}"><span></span></a>
+			<!-- 以下liタグにボタンの振舞いを持たせるためのbuttonタグ -->
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar">
+				<!-- ナビゲーションバーのトグルボタンに表示されるアイコンを指定 -->
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<!-- 各ボタンの定義をth:fragmentとして設定 -->
+			<div class="collapse navbar-collapse" id="main-navbar" style>
+				<!-- th:fragmentがth:replaceに埋め込まれた後に、このタグと子が削除されるように設定 -->	
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0" th:remove="all">
+					<!-- th:fragment設定（左から順に「ページリンク」「ページパラメタ」「ページタイトル」「ボタンアイコンパラメタ」「ボタンタイトル」） -->
+					<li th:fragment="menuItem (link, active, title, glyph, text)" th:class="nav-item">
+						<!-- menuItemのactiveが開いてるページのパラメタ(menu)と一致してる場合、ボタンをactiveに設定 -->
+						<a th:class="${active==menu ? 'nav-link active' : 'nav-link'}" th:href="@{__${link}__}" th:title="${title}">
+							<!-- ボタンのアイコン -->
+							<span th:class="'fa fa-'+${glyph}" class="fa fa-home"></span>
+							<!-- ボタンの文字列 -->
+							<span th:text="${text}">Template</span>
+						</a>
+					</li>
+				
+				</ul>
+				<!-- 各ボタンの詳細設定 -->
+				<ul class="nav navbar-nav me-auto">
+					<!-- th:fragmentをここに埋め込み -->
+					<li th:replace="~{::menuItem ('/', 'home', 'home page', 'home', 'Home')}">
+						<!-- ボタンアイコン -->
+						<span class="fa fa-home" aria-hidden="true" ></span>
+						<!-- ボタンタイトル -->
+						<span>Home</span>
+					</li>
+					<!-- 各ボタンの詳細設定 -->
+					<li th:replace="~{::menuItem ('/owners/find', 'owners', 'find owners', 'search', 'Find owners')}">
+						<!-- ボタンアイコン -->
+						<span class="fa fa-search" aria-hidden="true"></span>
+						<!-- ボタンタイトル -->
+						<span>Find owners</span>
+					</li>
+					<!-- 各ボタンの詳細設定 -->
+					<li th:replace="~{::menuItem ('/vets.html', 'vets', 'veterinarians', 'th-list', 'Veterinarians')}">
+						<!-- ボタンアイコン -->
+						<span class="fa fa-th-list" aria-hidden="true"></span>
+						<!-- ボタンタイトル -->
+						<span>Veterinarians</span>
+					</li>
+					<!-- 各ボタンの詳細設定 -->
+					<li th:replace="~{::menuItem ('/oups', 'error', 'trigger a RuntimeException to see how it is handled', 'exclamation-triangle', 'Error')}">
+						<!-- ボタンアイコン -->
+						<span class="fa exclamation-triangle" aria-hidden="true"></span>
+						<!-- ボタンタイトル -->
+						<span>Error</span>
+					</li>
+				
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<!-- 全てのブレークポイントで幅100％指定 -->
+	<div class="container-fluid">
+		<!-- 各ブレークポイントでmax-width設定 -->
+		<div class="container xd-container">
+			<!-- ページのボディを挿入 -->
+			<th:block th:insert="${template}" />
+			<!-- 改行 -->
+			<br />
+			<br />
+			<!-- 各ブレークポイントでmax-width設定 -->
+			<div class="container">
+				<!-- bootstrapのグリッドシステムでレイアウトを行うための行を指定 -->
+				<div class="row">
+					<!-- 全体幅に対して中心寄せ -->
+					<div class="col-12 text-center">
+						<!-- 画像 -->
+						<img src="../static/images/spring-logo.svg" th:src="@{/resources/images/spring-logo.svg}" alt="VMware Tanzu Logo" class="logo">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- jsのbootstrap定義 -->
+	<script th:src="@{/webjars/bootstrap/5.3.2/dist/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+
+</html>
+	
+		

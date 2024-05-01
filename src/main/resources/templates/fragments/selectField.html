@@ -1,0 +1,59 @@
+<!-- 
+■各箇所bootstrapの解説：
+	1.form-group: 関連するフォームコントロール（ラベル、入力フィールドなど）をひとまとめにし、関連する要素が
+					視覚的にグループ化され、フォームのデザインが整然とする。
+	2.has-error: フォームコントロールにエラーがある場合に適用され、エラーがあると背景色が赤色に変わる。
+	3.control-label: フォームラベルをスタイリングするためのクラスで、ラベルが右揃えされ、フォームコントロールとの
+					関連性が視覚的に表示される。
+	4.form-control: フォームの入力フィールドをスタイリングするためのクラスで、入力フィールドが均一な外観になり、
+					ブラウザのデフォルトスタイルから解放される。
+	5.fa-ok: チェックマークのアイコンを表示するためのクラス
+	6.fa-remove: 罰マークのアイコンを表示するためのクラス
+	7.col-sm-n: bootstrapのグリットシステムを使用してレスポンシブデザインを実装するためのクラスで、
+					nの数値についてはn個分のカラム幅を定義するもの。（カラムは12分割した列のこと）
+	8.aria-hidden: スクリーンリーダーに読み上げられるかどうかの設定
+	9.form-control-feedback: 利用したいアイコンと一緒に用いる。
+	
+■各箇所thymeleafの解説：
+	1.th:block: thymeleafのブロック要素を示す。条件分岐や反復処理など複数の子要素が伴う時に利用する。
+	2.th:fragment: 他のテンプレート内で再利用される部分を定義するために利用される。
+					th:fragment付随のタグの子要素が、th:replaceに埋め込まれるイメージ。
+	3.th:class: 動的にclassを定義することができる。（条件分岐でclass定義を変化させることができる）
+-->
+<html>
+	<body>
+		<form>
+			<!-- ドロップダウンセレクト機能のフラグメント -->
+			<th:block th:fragment="select (label, name, items)">
+				<!-- エラーが起こった場合起こらない場合のクラス定義 -->
+				<div th:with="valid=${!#fields.hasErrors(name)}"
+					th:class="${'form-group' + (valid ? '' : ' has-error')}"
+					class="form-group">
+					<!-- ラベル設定（カラム幅2） -->
+					<label class="col-sm-2 control-label" th:text="${label}">Label</label>
+					<!-- カラム幅10に設定 -->
+					<div class="col-sm-10">
+						<!-- ドロップダウンメニューを表示し、th:fieldでjava側にバインドする -->
+						<select th:field="*{__${name}__}">
+							<!-- ドロップダウンメニューに表示する値を格納 -->
+							<option th:each="item : ${items}" th:value="${item}"
+								th:text="${item}">dog</option>
+						</select>
+						<!-- 正常の場合、チェックマーク表示 -->
+						<span th:if="${valid}"
+							class="fa fa-ok form-control-feedback"
+							aria-hidden="true"></span>
+						<!-- 以上の場合、バツマークを表示 -->
+						<th:block th:if="${!valid}">
+							<!-- バツマークアイコン -->
+							<span class="fa fa-remove form-control-feedback"
+								aria-hidden="true"></span>
+							<!-- エラーメッセージ表示 -->
+							<span class="help-inline" th:errors="*{__${name}__}">Error</span>
+						</th:block>
+					</div>
+				</div>
+			</th:block>
+		</form>
+	</body>
+</html>

@@ -1,0 +1,50 @@
+<html xmlns:th="https://www.thymeleaf.org"
+	th:replace="~{fragments/layout :: layout (~{::body}, 'owners')}">
+
+<body>
+	<!-- 見出し文 -->
+	<h2>
+		<!-- ペット情報がない場合、このタグをつける -->
+		<th:block th:if="${pet['new']}">New </th:block>
+		Pet
+	</h2>
+	<!-- フォームコントロール -->
+	<form th:object="${pet}" class="form-horizontal" method="post">
+		<!-- OwnerId情報保持（非表示） -->
+		<input type="hidden" name="id" th:value="*{id}" />
+		<!-- 入力フォームをグループ化し、フィードバックアイコンを持たせる -->
+		<div class="form-group has-feedback">
+			<!-- オーナー名表示をグループ化 -->
+			<div class="form-group">
+				<!-- オーナー名ラベル（カラム幅2） -->
+				<label class="col-sm-2 control-label">Owner</label>
+				<!-- カラム幅を10に設定  -->
+				<div class="col-sm-10">
+					<!-- オーナー名 -->
+					<span th:text="${owner?.firstName + ' ' + owner?.lastName}" />
+				</div>
+			</div>
+			<!-- PetName入力フォーム -->
+			<input
+				th:replace="~{fragments/inputField :: input ('Name', 'name', 'text')}" />
+			<!-- BirthDate入力フォーム -->
+			<input
+				th:replace="~{fragments/inputField :: input ('Birth Date', 'birthDate', 'date')}" />
+			<!-- Type入力フォーム -->
+			<input
+				th:replace="~{fragments/selectField :: select ('Type', 'type', ${types})}" /> 
+		</div>
+		<!-- ボタンをグループ化 -->
+		<div class="form-group">
+			<!-- ボタンのサイズを調整 -->
+			<div class="col-sm-offset-2 col-sm-10">
+				<!-- 条件分岐ボタン -->
+				<button
+					th:with="text=${pet['new']} ? 'Add Pet' : 'Update Pet'"
+					class="btn btn-primary" type="submit" th:text="${text}">
+					Add Pet</button>
+			</div>
+		</div>
+	</form>
+</body>
+</html>

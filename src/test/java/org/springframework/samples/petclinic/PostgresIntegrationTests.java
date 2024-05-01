@@ -16,7 +16,8 @@
 
 package org.springframework.samples.petclinic;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -24,7 +25,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
@@ -42,10 +45,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.vet.VetRepository;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
+import org.testcontainers.DockerClientFactory;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = { "spring.docker.compose.skip.in-tests=false", //
 		"spring.docker.compose.profiles.active=postgres" })
 @ActiveProfiles("postgres")
+@DisabledInNativeImage
 public class PostgresIntegrationTests {
 
 	@LocalServerPort
@@ -57,14 +62,19 @@ public class PostgresIntegrationTests {
 	@Autowired
 	private RestTemplateBuilder builder;
 
+	@BeforeAll
+	static void available() {
+		assumeTrue(DockerClientFactory.instance().isDockerAvailable(), "Docker not available");
+	}
+
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(PetClinicApplication.class) //
-			.profiles("postgres") //
-			.properties( //
-					"spring.docker.compose.profiles.active=postgres" //
-			) //
-			.listeners(new PropertiesLogger()) //
-			.run(args);
+				.profiles("postgres") //
+				.properties( //
+						"spring.docker.compose.profiles.active=postgres" //
+				) //
+				.listeners(new PropertiesLogger()) //
+				.run(args);
 	}
 
 	@Test
@@ -107,8 +117,7 @@ public class PostgresIntegrationTests {
 					String value = source.getProperty(name).toString();
 					if (resolved.equals(value)) {
 						log.info(name + "=" + resolved);
-					}
-					else {
+					} else {
 						log.info(name + "=" + value + " OVERRIDDEN to " + resolved);
 					}
 				}

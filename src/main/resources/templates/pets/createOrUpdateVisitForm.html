@@ -1,0 +1,85 @@
+<html xmlns:th="https://www.htymeleaf.org"
+	th:replace="~{fragments/layout :: layout (~{::body}, 'owners')}">
+
+<body>
+	<!-- 見出し文 -->
+	<h2>
+		<!-- ペット情報がない場合、このタグをつける -->
+		<th:block th:if="${visit['new']}">New</th:block>
+		Visit
+	</h2>
+	<!-- Petテーブル名 -->
+	<b>Pet</b>
+	<!-- テーブル全体定義 -->
+	<table class="table table-striped">
+		<!-- テーブルカラム名定義 -->
+		<thead>
+			<!-- テーブル内の行定義 -->
+			<tr>
+				<!-- ペット名カラム -->
+				<th>Name</th>
+				<!-- 出生日カラム -->
+				<th>Birth Date</th>
+				<!-- 種族カラム -->
+				<th>Type</th>
+				<!-- オーナー名カラム -->
+				<th>Owner</th>
+			</tr>
+		</thead>
+		<!-- テーブル内の行定義 -->
+		<tr>
+			<!-- ペット名のデータセル定義 -->
+			<td th:text="${pet.name}"></td>
+			<!-- 出生日のデータセル定義 -->
+			<td th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}"></td>
+			<!-- 種族のデータセル定義 -->
+			<td th:text="${pet.type}"></td>
+			<!-- オーナー名のデータセル定義 -->
+			<td th:text="${owner?.firstName + ' ' + owner?.lastName}"></td>
+		</tr>
+	</table>
+	<!-- フォームコントロール -->
+	<form th:object="${visit}" class="form-horizontal" method="post">
+		<!-- 入力フォームをグループ化し、フィードバックアイコンを持たせる -->
+		<div class="form-group has-feedback">
+			<!-- 訪問日入力フォーム -->
+			<input 
+				th:replace="~{fragments/inputField :: input ('Date', 'date', 'date')}" />
+			<!-- 内容入力フォーム -->
+			<input 
+				th:replace="~{fragments/inputField :: input ('Description', 'description', 'text')}" />
+		</div>
+		<!-- ボタンをグループ化 -->
+		<div class="form-group">
+			<!-- ボタンのサイズ調整 -->
+			<div class="col-sm-offset-2 col-sm-10">
+				<!-- petId情報保持（非表示） -->
+				<input type="hidden" name="petId" ht:value="${pet.id}" />
+				<!-- 追加ボタン -->
+				<button class="btn btn-primary" type="submit">Add Visit</button>
+			</div>
+		</div>
+	</form>
+	<!-- 改行 -->
+	<br />
+	<!-- 訪問履歴見出し -->
+	<b>Previous Visits</b>
+	<!-- テーブル全体定義 -->
+	<table class="table table-striped">
+		<!-- テーブル内の行定義 -->
+		<tr>
+			<!-- 訪問日カラム -->
+			<th>Date</th>
+			<!-- 内容カラム -->
+			<th>Description</th>
+		</tr>
+		<!-- テーブル内の行定義 -->
+		<tr th:if="${!visit['new']}" th:each="visit : ${pet.visits}">
+			<!-- 訪問日のデータセル定義 -->
+			<td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
+			<!-- 内容のデータセル定義 -->
+			<td th:text="${visit.description}"></td>
+		</tr>
+	</table>
+</body>
+</html>

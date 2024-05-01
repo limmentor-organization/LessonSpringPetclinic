@@ -1,0 +1,41 @@
+<html xmlns:th="https://www.thymeleaf.org"
+	th:replace="~{fragments/layout :: layout (~{::body}, 'owners')}">
+
+<body>
+	<!-- 見出し文 -->
+	<h2>Owner</h2>
+	<!-- フォームコントロール -->
+	<form th:object="${owner}" class="form-horizontal" id="add-owner-form" method="post">
+		<!-- 入力フォームをグループ化し、フィードバックアイコンを持たせる -->
+		<div class="form-group has-feedback">
+			<!-- FisrtName入力フォーム -->
+			<input
+				th:replace="~{fragments/inputField :: input ('First Name', 'firstName', 'text')}" />
+			<!-- LastName入力フォーム -->
+			<input
+				th:replace="~{fragments/inputField :: input ('Last Name', 'lastName', 'text')}"/>
+			<!-- Address入力フォーム -->
+			<input
+				th:replace="~{fragments/inputField :: input ('Address', 'address', 'text')}" />
+			<!-- City入力フォーム -->
+			<input
+				th:replace="~{fragments/inputField :: input ('City', 'city', 'text')}" />
+			<!-- Telephone入力フォーム -->
+			<input
+				th:replace="~{fragments/inputField :: input ('Telephone', 'telephone', 'text')}" />
+		</div>
+		<!-- ボタンをグループ化 -->
+		<div class="form-group">
+			<!-- ボタンのサイズ調整 -->
+			<div class="col-sm-offset-2 col-sm-10">
+				<!-- 条件分岐ボタン -->
+				<button
+					th:with="text=${owner['new']} ? 'Add Owner' : 'Update Owner'"
+					class="btn btn-primary" type="submit" th:text="${text}">
+					Add Owner</button>
+			</div>
+		</div>
+	</form>
+</body>
+</html>
+	
